@@ -48,6 +48,7 @@ the simple introduction is here:
     * page(int page,int size),用于分页，其实和limit差不多，返回类型Model
     * from(String...tableNames),用于多表查询，返回类型Model.
 当然你如果觉得这些函数没法满足你的应用程序，你可以在你自己的Bean里面添加就行了。
+
 ##ActiveRecord4J数据操作流程
 
 ##使用ActiveRecord4J注意事项
