@@ -14,6 +14,6 @@ def call_back(body,header):
         print 'key:%s,value:%s'%(key,header[key])
 if __name__ == '__main__':
     client = MQClient('localhost',61613,'system','manager','imtai')
-    client.subscribe('/topic/foo', call_back)
+    client.subscribe('/topic/foo', call_back,'mactai')
     client.start()
     pass

@@ -62,12 +62,13 @@ class MQClient(threading.Thread):
             self.logger_service.info('CONNECT TO ACTIVEMQ SUCCESSFULLY ')
         else:
             self.logger_service.error(data)
-    def subscribe(self,destination,call_back):
+    def subscribe(self,destination,call_back,subscribe_name=None):
         
         self.destination = destination
         self.call_back = call_back
+        self.subscribe_name =subscribe_name
         def should_run_func():
-            subscribe_frame = SubscribeFrame(self.destination)
+            subscribe_frame = SubscribeFrame(self.destination,subscribe_name=self.subscribe_name)
             self.mqscoket.send_message(subscribe_frame)
             running = True
             while running:

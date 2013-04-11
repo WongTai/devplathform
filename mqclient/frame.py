@@ -28,9 +28,11 @@ class BaseFrame:
             header['content-length'] = content_length
         return header
     @classmethod
-    def init_subscribe_header(cls,destination,ack='auto'):
+    def init_subscribe_header(cls,destination,subscribe_name=None,ack='auto'):
         header = {}
         header['destination'] = destination
+        if subscribe_name:
+            header['activemq.subscriptionName'] = subscribe_name
         header['ack'] = ack
         return header
     @classmethod
@@ -67,8 +69,8 @@ class ConnectFrame(BaseFrame):
         frame_content_list.append('\x00')
         return ''.join(frame_content_list)
 class SubscribeFrame(BaseFrame):
-    def __init__(self,destination,ack='auto'):
-        self.header = BaseFrame.init_subscribe_header(destination,ack)
+    def __init__(self,destination,subscribe_name=None,ack='auto'):
+        self.header = BaseFrame.init_subscribe_header(destination,subscribe_name,ack)
     def frame_to_str(self):
         command ='SUBSCRIBE'
         frame_content_list = []
