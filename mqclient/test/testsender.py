@@ -6,7 +6,8 @@ Created on 2013-4-11
 @author: Wong
 '''
 
-
+import os,sys
+sys.path.append('/Users/innerp/devplathform')
 
 from mqclient.frame import ConnectFrame, MessageFrame, SendFrame
 from mqclient.mqclientscoket import MQSocket
@@ -26,7 +27,7 @@ if __name__=='__main__':
     for key in header:
         print 'key:%s,value:%s'%(key,header[key])
     print message_frame.get_body()
-    send_frame = SendFrame('/topic/foo','')
+    send_frame = SendFrame('/topic/foo','hello stomp')
     mqsocket.send_message(send_frame)
     mqsocket.close()
     #print 'Received\n', repr(data)

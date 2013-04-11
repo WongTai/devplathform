@@ -38,7 +38,7 @@ class LoggerService():
     def error(self,error):
         self.logger.error(error)
 class MQClient(threading.Thread):
-    def __init__(self,host,port,user,password):
+    def __init__(self,host,port,user,password,client_id=None):
         threading.Thread.__init__(self)
         self.logger_service = LoggerService(logging.INFO)
         self.host = host 
@@ -46,10 +46,15 @@ class MQClient(threading.Thread):
         self.password = password
         self.port =port
         self.mqscoket = MQSocket()
+        if client_id:
+            self.client_id =client_id
     def __init_connect(self):
         self.logger_service.info('INIT SOCKET CONNECT ,host->%s,port->%s'%(self.host,str(self.port)))
         self.mqscoket.connect(self.host, self.port)
-        connect_frame = ConnectFrame(self.host,self.user,self.password)
+        if self.client_id:
+            connect_frame = ConnectFrame(self.host,self.user,self.password,self.client_id)
+        else:
+            connect_frame = ConnectFrame(self.host,self.user,self.password)
         self.mqscoket.send_message(connect_frame)
         data=self.mqscoket.receive_message(MQSocket.MESSAGE_MAX_LENGTH)
         message_frame = MessageFrame(data)
@@ -57,18 +62,18 @@ class MQClient(threading.Thread):
             self.logger_service.info('CONNECT TO ACTIVEMQ SUCCESSFULLY ')
         else:
             self.logger_service.error(data)
-    def subscribe(self,destination,client_id,call_back):
+    def subscribe(self,destination,call_back):
         
         self.destination = destination
-        self.client_id = client_id
         self.call_back = call_back
         def should_run_func():
-            subscribe_frame = SubscribeFrame(self.destination,self.client_id)
+            subscribe_frame = SubscribeFrame(self.destination)
             self.mqscoket.send_message(subscribe_frame)
             running = True
             while running:
                 data = self.mqscoket.receive_message(MQSocket.MESSAGE_MAX_LENGTH)
                 message_frame = MessageFrame(data)
+                self.logger_service.info(message_frame.get_command())
                 if message_frame.get_command()!='ERROR':
                     self.call_back(message_frame.get_body(),message_frame.get_header())
                 else:

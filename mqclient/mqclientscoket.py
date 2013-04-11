@@ -40,6 +40,7 @@ class MQSocket(object):
 
     def send_message(self,frame):
         message = frame.frame_to_str()
+        print message
         if not message:
             return
         chunks = self.__break_into_chunks(message)

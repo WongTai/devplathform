@@ -8,10 +8,12 @@ class BaseFrame:
     def frame_to_str(self):
         raise NotImplementedError( "abstract method -- subclass %s must override" % self.__class__ )
     @classmethod
-    def init_connect_header(cls,host,login=None,password=None):
+    def init_connect_header(cls,host,login=None,password=None,client_id=None):
         header = {}
         header['accept-version'] = '1.1,1.2'
         header['host'] = host
+        if client_id:
+            header['client-id']=client_id
         if login:
             header['login'] = login
         if password:
@@ -26,10 +28,9 @@ class BaseFrame:
             header['content-length'] = content_length
         return header
     @classmethod
-    def init_subscribe_header(cls,destination,client_id,ack='auto'):
+    def init_subscribe_header(cls,destination,ack='auto'):
         header = {}
         header['destination'] = destination
-        header['id']= client_id
         header['ack'] = ack
         return header
     @classmethod
@@ -50,8 +51,8 @@ class BaseFrame:
         header['receipt'] = receipt
         return header
 class ConnectFrame(BaseFrame):
-    def __init__(self,host,login=None,password=None):
-        self.header = BaseFrame.init_connect_header(host,login,password)
+    def __init__(self,host,login=None,password=None,client_id=None):
+        self.header = BaseFrame.init_connect_header(host,login,password,client_id)
     def frame_to_str(self):
         frame_content_list = []
         command = 'CONNECT'
@@ -66,8 +67,8 @@ class ConnectFrame(BaseFrame):
         frame_content_list.append('\x00')
         return ''.join(frame_content_list)
 class SubscribeFrame(BaseFrame):
-    def __init__(self,destination,client_id,ack='auto'):
-        self.header = BaseFrame.init_subscribe_header(destination,client_id,ack)
+    def __init__(self,destination,ack='auto'):
+        self.header = BaseFrame.init_subscribe_header(destination,ack)
     def frame_to_str(self):
         command ='SUBSCRIBE'
         frame_content_list = []
