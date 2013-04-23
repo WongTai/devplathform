@@ -172,9 +172,6 @@ public class TestMyORM {
 	@Test
 	public void testAndAll(){
 		User u = new User();
-		/**
-		 * 漂亮的格式
-		 * */
 		int size  = u.eq("account","innerp")
 		             .and()
 		             .eq("password", "mypassword")
